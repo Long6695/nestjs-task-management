@@ -2,6 +2,7 @@ import { Entity, Column, ManyToOne } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Exclude } from 'class-transformer';
 import { BaseEntity } from '../base.entity';
+import { Workspace } from '../workspace/workspace.entity';
 
 export enum TaskStatus {
   DONE = 'done',
@@ -26,4 +27,8 @@ export class Task extends BaseEntity {
   @ManyToOne(() => User, (user) => user.tasks, { eager: false })
   @Exclude({ toPlainOnly: true })
   user: User;
+
+  @ManyToOne(() => Workspace, (workspace) => workspace.tasks, { eager: false })
+  @Exclude({ toPlainOnly: true })
+  workspace: Workspace;
 }

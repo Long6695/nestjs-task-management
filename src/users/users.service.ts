@@ -1,7 +1,8 @@
-import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { User } from './user.entity';
 import { hash } from 'bcrypt';
 import { UserRepository } from '../repositories/user/user.repository';
+import { In } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -39,5 +40,9 @@ export class UsersService {
 
   async delete(id: number): Promise<void> {
     await this.userRepository.delete(id);
+  }
+
+  async findUsersByIds(ids: number[]): Promise<User[]> {
+    return this.userRepository.findAll({ where: { id: In(ids) } });
   }
 }
