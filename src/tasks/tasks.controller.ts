@@ -9,6 +9,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
   UseInterceptors,
@@ -22,21 +23,29 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { ResponseMessage } from '../decorators/response.decorator';
 import { TASK_MESSAGE } from '../constants/task';
 import { HttpStatus } from '../constants/http-status';
+import { WorkspaceService } from '../workspace/workspace.service';
 
 @Controller('tasks')
 @UseGuards(JwtAccessTokenGuard)
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(
+    private readonly tasksService: TasksService,
+    private readonly workspaceService: WorkspaceService,
+  ) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
   @ResponseMessage(TASK_MESSAGE.GET_ALL)
   async findAll(
-    @Param('search') search: string,
-    @Param('status') status: string,
+    @Query('search') search: string,
+    @Query('status') status: string,
     @Req() req: { user: User },
   ): Promise<Task[]> {
-    return this.tasksService.findAll({ search, status, user: req.user });
+    return this.tasksService.findAll({
+      search,
+      status,
+      user: req.user,
+    });
   }
 
   @Get(':id')
@@ -62,7 +71,12 @@ export class TasksController {
     @Req() req: { user: User },
     @Body() createTaskDto: CreateTaskDto,
   ): Promise<Task> {
-    return this.tasksService.create(req.user.id, createTaskDto);
+    const { workspaceId, ...data } = createTaskDto;
+    const foundWorkspace = await this.workspaceService.findOneById(workspaceId);
+    if (!foundWorkspace) {
+      throw new NotFoundException('Workspace does not exist!');
+    }
+    return this.tasksService.create(req.user.id, data, foundWorkspace);
   }
 
   @Put(':id')

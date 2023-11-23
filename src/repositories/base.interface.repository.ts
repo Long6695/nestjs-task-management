@@ -35,4 +35,6 @@ export interface BaseInterfaceRepository<T> {
     alias?: string,
     queryRunner?: QueryRunner,
   ): SelectQueryBuilder<T>;
+
+  findAndCount(options?: FindManyOptions<T>): Promise<[T[], number]>;
 }

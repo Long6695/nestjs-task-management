@@ -8,6 +8,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { AuthModule } from './auth/auth.module';
 import { configValidationSchema } from './core/schemas/config.schema';
 import { CoreModule } from './core/core.module';
+import { WorkspaceModule } from './workspace/workspace.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { CoreModule } from './core/core.module';
     UsersModule,
     TasksModule,
     AuthModule,
+    WorkspaceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

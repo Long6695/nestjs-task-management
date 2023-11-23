@@ -65,4 +65,8 @@ export abstract class BaseAbstractRepository<T extends { id: number }>
   ): SelectQueryBuilder<T> {
     return this.entity.createQueryBuilder(alias, queryRunner);
   }
+
+  public findAndCount(options?: FindManyOptions<T>): Promise<[T[], number]> {
+    return this.entity.findAndCount(options);
+  }
 }
